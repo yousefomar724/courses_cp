@@ -440,9 +440,10 @@ export function CoursesPage() {
                           size="sm"
                           className="flex-1 w-full"
                           onClick={() =>
-                            navigate(
-                              `/dashboard/courses/${course._id}/progress`
-                            )
+                            // navigate(
+                            //   `/dashboard/courses/${course._id}/progress`
+                            // )
+                            console.log("navigate to /dashboard/courses/course._id/progress page")
                           }
                         >
                           <TrendingUp className="h-4 w-4 mr-1" />

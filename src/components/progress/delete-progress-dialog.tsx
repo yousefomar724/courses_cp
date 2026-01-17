@@ -18,6 +18,7 @@ interface DeleteProgressDialogProps {
   enrollmentId: string;
   userName?: string;
   courseName?: string;
+  userId: string;
 }
 
 export function DeleteProgressDialog({
@@ -26,6 +27,7 @@ export function DeleteProgressDialog({
   enrollmentId,
   userName,
   courseName,
+  userId,
 }: DeleteProgressDialogProps) {
   const deleteProgressMutation = useDeleteProgress();
 
@@ -33,6 +35,7 @@ export function DeleteProgressDialog({
     try {
       await deleteProgressMutation.mutateAsync({
         enrollmentId,
+        userId: userId,
       });
       toast.success("Progress deleted successfully");
       onClose();

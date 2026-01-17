@@ -30,14 +30,18 @@ import { EnrollmentsPage } from "./pages/enrollments-page";
 import { VideosLibraryPage } from "./pages/videos-library-page";
 import { QuizzesPage } from "./pages/quizzes-page";
 import { CreateUpdateQuiz } from "./pages/quiz/create-update-quiz";
+import { QuizStatisticsPage } from "./pages/quiz/quiz-statistics-page";
+import { QuizLeaderboardPage } from "./pages/quiz/quiz-leaderboard-page";
 import FreeCoursesPage from "./pages/free-courses-page";
 import CreateUpdateFreeCourse from "./pages/free-course/create-update-free-course";
 import SectionsPage from "./pages/free-course/sections-page";
 import CreateUpdateSection from "./pages/free-course/create-update-section";
 import ContentItemsPage from "./pages/free-course/content-items-page";
 import CreateUpdateContentItem from "./pages/free-course/create-update-content-item";
+import { FreeCourseEnrollmentsPage } from "./pages/free-course/free-course-enrollments-page";
 import { CourseProgressPage } from "./pages/progress/course-progress-page";
 import { CourseLeaderboardPage } from "./pages/progress/course-leaderboard-page";
+import { ProgressListPage } from "./pages/progress/progress-list-page";
 
 // Protected Route Component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -104,6 +108,8 @@ function App() {
             <Route path="quizzes" element={<QuizzesPage />} />
             <Route path="quizzes/new" element={<CreateUpdateQuiz />} />
             <Route path="quizzes/:id/edit" element={<CreateUpdateQuiz />} />
+            <Route path="quizzes/:id/statistics" element={<QuizStatisticsPage />} />
+            <Route path="quizzes/:id/leaderboard" element={<QuizLeaderboardPage />} />
             <Route path="videos-library" element={<VideosLibraryPage />} />
             <Route path="free-courses" element={<FreeCoursesPage />} />
             <Route path="free-courses/create" element={<CreateUpdateFreeCourse />} />
@@ -113,6 +119,7 @@ function App() {
             <Route path="free-courses/:freeCourseId/sections/:sectionId/edit" element={<CreateUpdateSection />} />
             <Route path="free-courses/:freeCourseId/sections/:sectionId/content" element={<ContentItemsPage />} />
             <Route path="free-courses/:freeCourseId/sections/:sectionId/content/create" element={<CreateUpdateContentItem />} />
+            <Route path="free-courses/:freeCourseId/enrollments" element={<FreeCourseEnrollmentsPage />} />
             {/* Content item editing disabled - view only */}
             <Route path="courses/new" element={<CreateCourse />} />
             <Route path="courses/:id/edit" element={<CreateCourse />} />
@@ -149,6 +156,7 @@ function App() {
               path="courses/:courseId/leaderboard"
               element={<CourseLeaderboardPage />}
             />
+            <Route path="progress" element={<ProgressListPage />} />
           </Route>
 
           {/* Redirect root to dashboard */}

@@ -539,17 +539,16 @@ export interface Enrollment {
   finalAmount: number
   currency: 'usd' | 'eur' | 'gbp' | 'aed'
   paymentStatus: 'pending' | 'completed' | 'failed' | 'refunded' | 'cancelled'
-  stripePayment?: {
-    paymentIntentId: string
+  paypalPayment?: {
+    orderId: string
+    captureId?: string
     amount: number
     currency: string
     status: string
-    customerId?: string
-    invoiceId?: string
-    refundId?: string
-    metadata?: Record<string, any>
-    createdAt: Date
-    updatedAt: Date
+    payerEmail?: string
+    payerName?: string
+    createTime?: string
+    updateTime?: string
   }
   expiresAt?: Date
   isActive: boolean
