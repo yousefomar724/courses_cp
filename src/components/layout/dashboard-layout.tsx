@@ -207,7 +207,7 @@ export function DashboardLayout() {
 
         <SidebarInset className="overflow-y-auto">
           {/* Header */}
-          <header className="bg-white shadow-sm border-b">
+          <header className="fixed top-0 z-50 bg-white shadow-sm border-b w-full">
             <div className="flex h-16 items-center gap-2 px-4">
               <SidebarTrigger className="-ml-1" />
               <div className="flex items-center flex-1">
@@ -219,7 +219,7 @@ export function DashboardLayout() {
             </div>
           </header>
           {/* Page content */}
-          <div className="p-6">
+          <div className="p-6 mt-16 z-0">
             <Outlet />
           </div>
         </SidebarInset>
