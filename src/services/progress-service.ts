@@ -1,4 +1,4 @@
-import { apiGet, apiPost, apiDelete, apiGetPaginated } from './api';
+import { apiGet, apiPost, apiGetPaginated } from './api';
 import axios from 'axios';
 import type {
   Progress,
