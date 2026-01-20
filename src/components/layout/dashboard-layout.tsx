@@ -38,6 +38,7 @@ import {
   ClipboardCheck,
   BookText,
 } from "lucide-react"
+import { useState } from "react"
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
@@ -123,7 +124,7 @@ export function DashboardLayout() {
         <Sidebar collapsible="icon">
           <SidebarHeader>
             <div className="flex items-center justify-center p-2 lg:px-4 lg:py-2 min-h-12">
-              <img src="/logo-small.png" alt="logo" className="w-6 lg:w-24" />
+              <img src="/logo-small.png" alt="logo" className="w-24" />
             </div>
           </SidebarHeader>
 
@@ -204,7 +205,7 @@ export function DashboardLayout() {
           <SidebarRail />
         </Sidebar>
 
-        <SidebarInset>
+        <SidebarInset className="overflow-y-auto">
           {/* Header */}
           <header className="bg-white shadow-sm border-b">
             <div className="flex h-16 items-center gap-2 px-4">
@@ -217,9 +218,7 @@ export function DashboardLayout() {
               </div>
             </div>
           </header>
-
           {/* Page content */}
-
           <div className="p-6">
             <Outlet />
           </div>

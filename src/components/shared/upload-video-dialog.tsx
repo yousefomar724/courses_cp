@@ -116,12 +116,6 @@ export function UploadVideoDialog({
         return;
       }
 
-      // Validate file size (max 500MB)
-      const maxSize = 500 * 1024 * 1024; // 500MB
-      if (file.size > maxSize) {
-        toast.error("Video file size cannot exceed 500MB");
-        return;
-      }
 
       setSelectedVideo(file);
       setUploadStatus("idle");
