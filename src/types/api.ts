@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // API Response Types
 export interface ApiResponse<T = any> {
   success: boolean
@@ -1144,13 +1145,13 @@ export interface ProgressWithCourse {
   course: Course;
   enrollment: Enrollment;
   progress: Progress;
-    instructorPercentage: number;
-    imageUrl: string;
-    introductoryVideoUrl: string;
-    isActive: boolean;
-    createdAt: string;
-    updatedAt: string;
-  };
+  instructorPercentage: number;
+  imageUrl: string;
+  introductoryVideoUrl: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
 
 
 export interface TopicProgressDetail {
