@@ -495,9 +495,8 @@ export function AdminsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-4 mb-4">
-            <div className="flex-1">
-              <div className="relative">
+          <div className="flex flex-wrap gap-4 mb-4">
+              <div className="relative flex-1">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search admins..."
@@ -507,9 +506,8 @@ export function AdminsPage() {
                   className="pl-8"
                 />
               </div>
-            </div>
             <Select value={isActiveFilter} onValueChange={handleFilterChange}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full md:w-[180px]">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
@@ -535,7 +533,7 @@ export function AdminsPage() {
                   <TableHead>Status</TableHead>
                   <TableHead>Active</TableHead>
                   <TableHead>Last Login</TableHead>
-                  <TableHead className="w-[140px]">Actions</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -583,9 +581,7 @@ export function AdminsPage() {
                           ? new Date(admin.lastLogin).toLocaleDateString()
                           : "Never"}
                       </TableCell>
-                      <TableCell>
-                        {/* Desktop Actions - Direct buttons for md+ screens */}
-                        <div className="hidden md:flex gap-2">
+                      <TableCell className="flex items-center gap-2">
                           {canUpdate && (
                             <>
                               <Button
@@ -616,48 +612,6 @@ export function AdminsPage() {
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           )}
-                        </div>
-
-                        {/* Mobile Actions - Dropdown for small screens */}
-                        <div className="md:hidden">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              {canUpdate && (
-                                <>
-                                  <DropdownMenuItem
-                                    onClick={() => handleEditAdmin(admin)}
-                                  >
-                                    <Edit className="mr-2 h-4 w-4" />
-                                    Edit
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem
-                                    onClick={() => {
-                                      setPasswordAdminId(admin._id);
-                                      setIsPasswordDialogOpen(true);
-                                    }}
-                                  >
-                                    <Key className="mr-2 h-4 w-4" />
-                                    Change Password
-                                  </DropdownMenuItem>
-                                </>
-                              )}
-                              {canDelete && (
-                                <DropdownMenuItem
-                                  onClick={() => handleDeleteAdmin(admin._id)}
-                                  className="text-red-600"
-                                >
-                                  <Trash2 className="mr-2 h-4 w-4" />
-                                  Delete
-                                </DropdownMenuItem>
-                              )}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
                       </TableCell>
                     </TableRow>
                   ))
