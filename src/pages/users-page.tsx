@@ -408,7 +408,6 @@ export function UsersPage() {
                   <TableHead>Academic Year</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Verified</TableHead>
-                  <TableHead>Devices</TableHead>
                   <TableHead className="w-[120px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -481,42 +480,23 @@ export function UsersPage() {
                           <Smartphone className="h-4 w-4 mr-1" />
                           {user.devices?.length || 0}
                         </Button>
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <div>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            {canUpdate && (
-                              <DropdownMenuItem
-                                onClick={() => handleEditUser(user)}
-                              >
-                                <Edit className="mr-2 h-4 w-4" />
-                                Edit
-                              </DropdownMenuItem>
-                            )}
-                            <DropdownMenuItem
-                              onClick={() => handleViewDevices(user)}
-                            >
-                              <Smartphone className="mr-2 h-4 w-4" />
-                              View Devices
-                            </DropdownMenuItem>
-                            {canDelete && (
-                              <DropdownMenuItem
-                                onClick={() => handleDeleteUser(user._id)}
-                                className="text-red-600"
-                              >
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Delete
-                              </DropdownMenuItem>
-                            )}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                        {canUpdate && (
+                          <Button
+                            onClick={() => handleEditUser(user)}
+                          >
+                            <Edit className="mr-2 h-4 w-4" />
+                            Edit
+                          </Button>
+                        )}
+                        {canDelete && (
+                          <Button
+                            onClick={() => handleDeleteUser(user._id)}
+                            className="text-red-600"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete
+                          </Button>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))
