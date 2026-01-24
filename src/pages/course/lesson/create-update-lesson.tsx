@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -66,8 +67,6 @@ const lessonSchema = z.object({
     .optional(),
   topicId: z.string().min(1, "Topic is required"),
   main_recording_id: z.string().optional(),
-  recording_gvo_id: z.string().optional(),
-  recording_vvt_id: z.string().optional(),
   isActive: z.boolean(),
 });
 
@@ -111,8 +110,6 @@ export function CreateUpdateLesson() {
       },
       topicId: topicId || "",
       main_recording_id: "",
-      recording_gvo_id: "",
-      recording_vvt_id: "",
       isActive: true,
     },
   });
@@ -141,8 +138,6 @@ export function CreateUpdateLesson() {
             ? lesson.topicId
             : lesson.topicId._id,
         main_recording_id: "", // Will be set after videos are loaded
-        recording_gvo_id: "", // Will be set after videos are loaded
-        recording_vvt_id: "", // Will be set after videos are loaded
         isActive: lesson.isActive,
       });
     }
@@ -172,34 +167,6 @@ export function CreateUpdateLesson() {
           );
           if (mainVideo) {
             form.setValue("main_recording_id", mainVideo.id);
-          }
-        }
-      }
-
-      // Handle recording_gvo_url - can be string or object
-      if (lesson.recording_gvo_url) {
-        if (typeof lesson.recording_gvo_url === "object" && lesson.recording_gvo_url.id) {
-          form.setValue("recording_gvo_id", lesson.recording_gvo_url.id);
-        } else if (typeof lesson.recording_gvo_url === "string") {
-          const gvoVideo = videosData.data.find(
-            (video) => video.videoUrl === lesson.recording_gvo_url
-          );
-          if (gvoVideo) {
-            form.setValue("recording_gvo_id", gvoVideo.id);
-          }
-        }
-      }
-
-      // Handle recording_vvt_url - can be string or object
-      if (lesson.recording_vvt_url) {
-        if (typeof lesson.recording_vvt_url === "object" && lesson.recording_vvt_url.id) {
-          form.setValue("recording_vvt_id", lesson.recording_vvt_url.id);
-        } else if (typeof lesson.recording_vvt_url === "string") {
-          const vvtVideo = videosData.data.find(
-            (video) => video.videoUrl === lesson.recording_vvt_url
-          );
-          if (vvtVideo) {
-            form.setValue("recording_vvt_id", vvtVideo.id);
           }
         }
       }
@@ -272,8 +239,6 @@ export function CreateUpdateLesson() {
     try {
       // Get video URLs from selected video IDs
       let mainRecordingUrl = "";
-      let gvoRecordingUrl = "";
-      let vvtRecordingUrl = "";
 
       if (data.main_recording_id) {
         const mainVideo = videosData?.data?.find(
@@ -281,24 +246,6 @@ export function CreateUpdateLesson() {
         );
         if (mainVideo) {
           mainRecordingUrl = mainVideo.videoUrl;
-        }
-      }
-
-      if (data.recording_gvo_id) {
-        const gvoVideo = videosData?.data?.find(
-          (video) => video.id === data.recording_gvo_id
-        );
-        if (gvoVideo) {
-          gvoRecordingUrl = gvoVideo.videoUrl;
-        }
-      }
-
-      if (data.recording_vvt_id) {
-        const vvtVideo = videosData?.data?.find(
-          (video) => video.id === data.recording_vvt_id
-        );
-        if (vvtVideo) {
-          vvtRecordingUrl = vvtVideo.videoUrl;
         }
       }
 
@@ -319,8 +266,6 @@ export function CreateUpdateLesson() {
           },
           topicId: data.topicId!,
           main_recording_url: mainRecordingUrl || undefined,
-          recording_gvo_url: gvoRecordingUrl || undefined,
-          recording_vvt_url: vvtRecordingUrl || undefined,
           isActive: data.isActive,
         };
 
@@ -349,8 +294,6 @@ export function CreateUpdateLesson() {
             : undefined,
           topicId: data.topicId!,
           main_recording_url: mainRecordingUrl || "",
-          recording_gvo_url: gvoRecordingUrl || undefined,
-          recording_vvt_url: vvtRecordingUrl || undefined,
         };
 
         await createLessonMutation.mutateAsync(lessonData);
@@ -382,18 +325,6 @@ export function CreateUpdateLesson() {
       if (typeof lesson.main_recording_url === "object" &&
           lesson.main_recording_url.id === videoId) {
         return lesson.main_recording_url.videoUrl;
-      }
-
-      // Check recording_gvo_url
-      if (typeof lesson.recording_gvo_url === "object" &&
-          lesson.recording_gvo_url.id === videoId) {
-        return lesson.recording_gvo_url.videoUrl;
-      }
-
-      // Check recording_vvt_url
-      if (typeof lesson.recording_vvt_url === "object" &&
-          lesson.recording_vvt_url.id === videoId) {
-        return lesson.recording_vvt_url.videoUrl;
       }
     }
 
@@ -643,128 +574,6 @@ export function CreateUpdateLesson() {
                       <div className="mt-3">
                         <video
                           src={getVideoPreviewUrl(form.watch("main_recording_id"))!}
-                          controls
-                          className="w-full rounded-lg"
-                          style={{ maxHeight: "400px" }}
-                        />
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* GVO Recording */}
-              <div className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="recording_gvo_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>GVO Recording</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select GVO recording" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value={null as any}>
-                            No GVO recording
-                          </SelectItem>
-                          {videosData?.data?.map((video) => (
-                            <SelectItem key={video.id} value={video.id}>
-                              {video.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {/* Show selected GVO recording */}
-                {form.watch("recording_gvo_id") && (
-                  <div className="mt-3 p-3 border rounded-lg bg-gray-50 dark:bg-gray-800">
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                      Selected GVO recording:
-                    </p>
-                    <div className="text-sm font-medium mb-3">
-                      {
-                        videosData?.data?.find(
-                          (video) => video.id === form.watch("recording_gvo_id")
-                        )?.name
-                      }
-                    </div>
-                    {/* Video Preview */}
-                    {getVideoPreviewUrl(form.watch("recording_gvo_id")) && (
-                      <div className="mt-3">
-                        <video
-                          src={getVideoPreviewUrl(form.watch("recording_gvo_id"))!}
-                          controls
-                          className="w-full rounded-lg"
-                          style={{ maxHeight: "400px" }}
-                        />
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* VVT Recording */}
-              <div className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="recording_vvt_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>VVT Recording</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select VVT recording" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value={null as any}>
-                            No VVT recording
-                          </SelectItem>
-                          {videosData?.data?.map((video) => (
-                            <SelectItem key={video.id} value={video.id}>
-                              {video.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {/* Show selected VVT recording */}
-                {form.watch("recording_vvt_id") && (
-                  <div className="mt-3 p-3 border rounded-lg bg-gray-50 dark:bg-gray-800">
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                      Selected VVT recording:
-                    </p>
-                    <div className="text-sm font-medium mb-3">
-                      {
-                        videosData?.data?.find(
-                          (video) => video.id === form.watch("recording_vvt_id")
-                        )?.name
-                      }
-                    </div>
-                    {/* Video Preview */}
-                    {getVideoPreviewUrl(form.watch("recording_vvt_id")) && (
-                      <div className="mt-3">
-                        <video
-                          src={getVideoPreviewUrl(form.watch("recording_vvt_id"))!}
                           controls
                           className="w-full rounded-lg"
                           style={{ maxHeight: "400px" }}

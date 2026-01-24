@@ -148,21 +148,9 @@ function SortableLessonRow({
         {getLessonDescription(lesson)}
       </TableCell>
       <TableCell>
-        <div className="flex flex-col gap-1">
-          <Badge variant="outline" className="text-xs">
-            Main: {lesson.main_recording_url ? "✓" : "✗"}
-          </Badge>
-          {lesson.recording_gvo_url && (
-            <Badge variant="outline" className="text-xs">
-              GVO: ✓
-            </Badge>
-          )}
-          {lesson.recording_vvt_url && (
-            <Badge variant="outline" className="text-xs">
-              VVT: ✓
-            </Badge>
-          )}
-        </div>
+        <Badge variant="outline" className="text-xs">
+          Main: {lesson.main_recording_url ? "✓" : "✗"}
+        </Badge>
       </TableCell>
       <TableCell>
         <Badge variant={lesson.isActive ? "default" : "secondary"}>

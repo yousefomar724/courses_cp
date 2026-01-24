@@ -38,7 +38,6 @@ import {
   ClipboardCheck,
   BookText,
 } from "lucide-react"
-import { useState } from "react"
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
