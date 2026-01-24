@@ -1,4 +1,5 @@
-import { apiGet, apiPost, apiDelete, apiGetPaginated } from './api';
+import { apiGet, apiPost, apiGetPaginated } from './api';
+import axios from 'axios';
 import type {
   Progress,
   ProgressSummary,
@@ -95,8 +96,20 @@ export const progressService = {
   },
 
   // Delete user progress (admin)
-  async deleteProgress(enrollmentId: string): Promise<ApiResponse<void>> {
-    return await apiDelete(`/dashboard/progress/${enrollmentId}`);
+  async deleteProgress(enrollmentId: string, userId: string): Promise<ApiResponse<void>> {
+    // Use apiPost as DELETE with body workaround since apiDelete doesn't support body
+    // Backend expects DELETE with body containing userId
+    const API_BASE_URL = import.meta.env.VITE_API_URL || "https://courses-api.alef-team.com/api/v1/";
+    const token = localStorage.getItem('admin_token');
+    
+    const response = await axios.delete(`${API_BASE_URL}dashboard/progress/${enrollmentId}`, {
+      data: { userId },
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
   },
 
   // Get paginated progress list for admin (optional, for admin dashboard)

@@ -41,7 +41,6 @@ import {
   GraduationCap,
   RefreshCw,
   File,
-  TrendingUp,
 } from "lucide-react"
 import { toast } from "sonner"
 import { useAuthStore } from "@/stores/auth-store"
@@ -434,7 +433,7 @@ export function CoursesPage() {
                           Files
                         </Button>
                       </div>
-                      <div className="flex items-center gap-2 w-full">
+                      {/* <div className="flex items-center gap-2 w-full">
                         <Button
                           variant="outline"
                           size="sm"
@@ -448,7 +447,7 @@ export function CoursesPage() {
                           <TrendingUp className="h-4 w-4 mr-1" />
                           Progress
                         </Button>
-                      </div>
+                      </div> */}
                       <div className="flex items-center gap-2 w-full">
                         {canUpdate && (
                           <>

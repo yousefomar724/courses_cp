@@ -241,8 +241,8 @@ export const useDeleteProgress = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ enrollmentId }: { enrollmentId: string }) =>
-      progressService.deleteProgress(enrollmentId),
+    mutationFn: ({ enrollmentId, userId }: { enrollmentId: string; userId: string }) =>
+      progressService.deleteProgress(enrollmentId, userId),
     onSuccess: () => {
       // Invalidate all progress queries
       queryClient.invalidateQueries({ queryKey: progressKeys.all });

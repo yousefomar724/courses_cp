@@ -32,7 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Pencil, Trash2, FolderOpen } from "lucide-react";
+import { Plus, Pencil, Trash2, FolderOpen, Users } from "lucide-react";
 import type { FreeCourse, University, Faculty, Admin } from "@/types/api";
 
 export default function FreeCoursesPage() {
@@ -200,6 +200,18 @@ export default function FreeCoursesPage() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
+                          <Link
+                            to={`/dashboard/free-courses/${course._id}/enrollments`}
+                          >
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              title="View Enrollments"
+                            >
+                              <Users className="mr-2 h-4 w-4" />
+                              Enrollments
+                            </Button>
+                          </Link>
                           {canUpdate && (
                             <Link
                               to={`/dashboard/free-courses/${course._id}/edit`}

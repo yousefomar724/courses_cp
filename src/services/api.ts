@@ -19,7 +19,7 @@ export const setTokenExpirationHandler = (handler: () => void) => {
 }
 
 // Create axios instance
-const createApiInstance = (): AxiosInstance => {
+export const createApiInstance = (): AxiosInstance => {
   const instance = axios.create({
     baseURL: API_BASE_URL,
     headers: {
