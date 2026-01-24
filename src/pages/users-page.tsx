@@ -480,7 +480,6 @@ export function UsersPage() {
                             onClick={() => handleEditUser(user)}
                           >
                             <Edit className="h-4 w-4" />
-                            Edit
                           </Button>
                         )}
                         {canDelete && (
@@ -490,7 +489,6 @@ export function UsersPage() {
                             onClick={() => handleDeleteUser(user._id)}
                           >
                             <Trash2 className="h-4 w-4" />
-                            Delete
                           </Button>
                         )}
                       </TableCell>
