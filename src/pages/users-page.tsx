@@ -482,18 +482,21 @@ export function UsersPage() {
                         </Button>
                         {canUpdate && (
                           <Button
+                            size="sm"
+                            variant="outline"
                             onClick={() => handleEditUser(user)}
                           >
-                            <Edit className="mr-2 h-4 w-4" />
+                            <Edit className="h-4 w-4" />
                             Edit
                           </Button>
                         )}
                         {canDelete && (
                           <Button
+                            size="sm"
+                            variant="destructive"
                             onClick={() => handleDeleteUser(user._id)}
-                            className="text-red-600"
                           >
-                            <Trash2 className="mr-2 h-4 w-4" />
+                            <Trash2 className="h-4 w-4" />
                             Delete
                           </Button>
                         )}
