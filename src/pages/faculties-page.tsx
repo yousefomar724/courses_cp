@@ -48,12 +48,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -64,7 +58,6 @@ import { Switch } from "@/components/ui/switch";
 import {
   Plus,
   Search,
-  MoreHorizontal,
   Edit,
   Trash2,
   Building2,
@@ -309,10 +302,6 @@ export function FacultiesPage() {
     }
   };
 
-  const handleHardDeleteFaculty = async (facultyId: string) => {
-    setHardDeleteFacultyId(facultyId);
-    setIsHardDeleteDialogOpen(true);
-  };
 
   const confirmHardDeleteFaculty = async () => {
     try {
