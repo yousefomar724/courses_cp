@@ -636,7 +636,7 @@ export function UsersPage() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="Fall">Fall</SelectItem>
+                        <SelectItem value="Winter">Winter</SelectItem>
                         <SelectItem value="Spring">Spring</SelectItem>
                         <SelectItem value="Summer">Summer</SelectItem>
                       </SelectContent>
