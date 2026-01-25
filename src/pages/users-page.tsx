@@ -345,9 +345,8 @@ export function UsersPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-4 mb-4">
-            <div className="flex-1">
-              <div className="relative">
+          <div className="flex flex-wrap gap-4 mb-4">
+              <div className="relative flex-1">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search users..."
@@ -357,12 +356,11 @@ export function UsersPage() {
                   className="pl-8"
                 />
               </div>
-            </div>
             <Select
               value={blockedFilter}
               onValueChange={handleBlockedFilterChange}
             >
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full md:w-[180px]">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
@@ -375,7 +373,7 @@ export function UsersPage() {
               value={emailVerifiedFilter}
               onValueChange={handleEmailVerifiedFilterChange}
             >
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full md:w-[180px]">
                 <SelectValue placeholder="Filter by verification" />
               </SelectTrigger>
               <SelectContent>
@@ -401,7 +399,7 @@ export function UsersPage() {
                   <TableHead>Academic Year</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Verified</TableHead>
-                  <TableHead className="w-[120px]">Actions</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -464,7 +462,7 @@ export function UsersPage() {
                           {user.emailVerified ? "Verified" : "Unverified"}
                         </Badge>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="flex items-center gap-2">
                         <Button
                           variant="outline"
                           size="sm"
@@ -475,19 +473,20 @@ export function UsersPage() {
                         </Button>
                         {canUpdate && (
                           <Button
+                            size="sm"
+                            variant="outline"
                             onClick={() => handleEditUser(user)}
                           >
-                            <Edit className="mr-2 h-4 w-4" />
-                            Edit
+                            <Edit className="h-4 w-4" />
                           </Button>
                         )}
                         {canDelete && (
                           <Button
+                            size="sm"
+                            variant="destructive"
                             onClick={() => handleDeleteUser(user._id)}
-                            className="text-red-600"
                           >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         )}
                       </TableCell>

@@ -630,9 +630,8 @@ export function RolesPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-4 mb-4">
-            <div className="flex-1">
-              <div className="relative">
+          <div className="flex flex-wrap gap-4 mb-4">
+            <div className="relative flex-1"> 
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search roles..."
@@ -642,9 +641,8 @@ export function RolesPage() {
                   className="pl-8"
                 />
               </div>
-            </div>
             <Select value={isActiveFilter} onValueChange={handleFilterChange}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full md:w-[180px]">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
@@ -668,7 +666,7 @@ export function RolesPage() {
                   <TableHead>Status</TableHead>
                   <TableHead>Active</TableHead>
                   <TableHead>Created</TableHead>
-                  <TableHead className="w-[120px]">Actions</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -725,9 +723,7 @@ export function RolesPage() {
                       <TableCell>
                         {new Date(role.createdAt).toLocaleDateString()}
                       </TableCell>
-                      <TableCell>
-                        {/* Desktop Actions - Direct buttons for md+ screens */}
-                        <div className="hidden md:flex gap-2">
+                      <TableCell className="flex items-center gap-2">
                           {canUpdate && (
                             <Button
                               variant="outline"
@@ -746,37 +742,6 @@ export function RolesPage() {
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           )}
-                        </div>
-
-                        {/* Mobile Actions - Dropdown for small screens */}
-                        <div className="md:hidden">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              {canUpdate && (
-                                <DropdownMenuItem
-                                  onClick={() => handleEditRole(role)}
-                                >
-                                  <Edit className="mr-2 h-4 w-4" />
-                                  Edit
-                                </DropdownMenuItem>
-                              )}
-                              {canDelete && (
-                                <DropdownMenuItem
-                                  onClick={() => handleDeleteRole(role._id)}
-                                  className="text-red-600"
-                                >
-                                  <Trash2 className="mr-2 h-4 w-4" />
-                                  Delete
-                                </DropdownMenuItem>
-                              )}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
                       </TableCell>
                     </TableRow>
                   ))

@@ -309,8 +309,7 @@ export function VideosLibraryPage() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col lg:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
+              <div className="relative flex-1">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
                   placeholder="Search videos by name..."
@@ -319,13 +318,12 @@ export function VideosLibraryPage() {
                   className="pl-10"
                 />
               </div>
-            </div>
 
             <Select
               value={entityTypeFilter}
               onValueChange={(value) => handleFilterChange("entityType", value)}
             >
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full md:w-[180px]">
                 <SelectValue placeholder="Entity Type" />
               </SelectTrigger>
               <SelectContent>
@@ -339,7 +337,7 @@ export function VideosLibraryPage() {
               value={statusFilter}
               onValueChange={(value) => handleFilterChange("status", value)}
             >
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full md:w-[180px]">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
@@ -393,7 +391,7 @@ export function VideosLibraryPage() {
                     <TableHead>Status</TableHead>
                     <TableHead>Uploaded By</TableHead>
                     <TableHead>Created</TableHead>
-                    <TableHead className="w-[50px]">Actions</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -448,34 +446,28 @@ export function VideosLibraryPage() {
                           </span>
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
+                      <TableCell className="flex items-center gap-2">
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => handlePreview(video)}
                           >
-                            <Eye className="h-4 w-4 mr-2" />
-                            Preview
+                            <Eye className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDownload(video)}
                           >
-                            <Download className="h-4 w-4 mr-2" />
-                            Download
+                            <Download className="h-4 w-4" />
                           </Button>
                           <Button
-                            variant="ghost"
+                            variant="destructive"
                             size="sm"
-                            className="text-red-600 hover:text-red-600"
                             onClick={() => handleSoftDelete(video)}
                           >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Delete
+                            <Trash2 className="h-4 w-4" />
                           </Button>
-                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
