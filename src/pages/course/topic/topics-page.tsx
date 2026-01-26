@@ -146,17 +146,17 @@ function SortableTopicRow({
         {topic.discount > 0 ? (
           <div className="flex items-center gap-2">
             <span className="line-through text-muted-foreground">
-              ${topic.topicsPrice}
+              ₪{topic.topicsPrice}
             </span>
             <span className="font-semibold text-green-600">
-              ${getDiscountedPrice(topic)}
+              ₪{getDiscountedPrice(topic)}
             </span>
             <Badge variant="destructive" className="text-xs">
               -{topic.discount}%
             </Badge>
           </div>
         ) : (
-          `$${topic.topicsPrice}`
+          `₪${topic.topicsPrice}`
         )}
       </TableCell>
       <TableCell>

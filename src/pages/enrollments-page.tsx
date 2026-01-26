@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import {
   Card,
@@ -38,11 +39,11 @@ import {
   Loader2,
   Search,
   RefreshCw,
-  DollarSign,
   Users,
   XCircle,
   CheckCircle,
   Clock,
+  ArrowLeftRight,
 } from "lucide-react";
 import { useEnrollments } from "../hooks/use-enrollments";
 import type { EnrollmentFilters, RefundRequest } from "../types/api";
@@ -138,7 +139,7 @@ export function EnrollmentsPage() {
       },
       refunded: {
         variant: "outline" as const,
-        icon: DollarSign,
+        icon: ArrowLeftRight,
         label: "Refunded",
       },
       cancelled: {
@@ -276,8 +277,8 @@ export function EnrollmentsPage() {
     return null;
   };
 
-  const formatCurrency = (amount: number, currency: string = "usd") => {
-    return new Intl.NumberFormat("en-US", {
+  const formatCurrency = (amount: number, currency: string = "ils") => {
+    return new Intl.NumberFormat("he-IL", {
       style: "currency",
       currency: currency.toUpperCase(),
     }).format(amount);
@@ -361,7 +362,7 @@ export function EnrollmentsPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <span className="text-muted-foreground text-sm font-semibold">₪</span>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">

@@ -538,7 +538,7 @@ export interface Enrollment {
   totalAmount: number
   discountAmount: number
   finalAmount: number
-  currency: 'usd' | 'eur' | 'gbp' | 'aed'
+  currency: 'ils' | 'eur' | 'gbp' | 'aed'
   paymentStatus: 'pending' | 'completed' | 'failed' | 'refunded' | 'cancelled'
   paypalPayment?: {
     orderId: string
@@ -561,7 +561,7 @@ export interface CreateEnrollmentInput {
   courseId: string
   fullAccess: boolean
   purchasedTopics?: string[]
-  currency?: 'usd' | 'eur' | 'gbp' | 'aed'
+  currency?: 'ils' | 'eur' | 'gbp' | 'aed'
 }
 
 export interface UpdateEnrollmentInput {

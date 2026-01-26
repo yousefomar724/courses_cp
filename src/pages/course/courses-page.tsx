@@ -35,7 +35,6 @@ import {
   Trash2,
   BookOpen,
   Clock,
-  DollarSign,
   Users,
   Image,
   GraduationCap,
@@ -221,22 +220,22 @@ export function CoursesPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Average Price</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <span className="text-muted-foreground text-sm font-semibold">₪</span>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${statsData?.data?.averagePrice || 0}
+              ₪{statsData?.data?.averagePrice || 0}
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <span className="text-muted-foreground text-sm font-semibold">₪</span>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${statsData?.data?.totalRevenue || 0}
+              ₪{statsData?.data?.totalRevenue || 0}
             </div>
           </CardContent>
         </Card>
@@ -345,19 +344,19 @@ export function CoursesPage() {
                         <span>{course.numberOfCourseHours} hours</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <DollarSign className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground text-sm font-semibold">₪</span>
                         <span>
                           {course.discount > 0 ? (
                             <>
                               <span className="line-through text-muted-foreground">
-                                ${course.coursePrice}
+                                ₪{course.coursePrice}
                               </span>{" "}
                               <span className="font-semibold text-green-600">
-                                ${getDiscountedPrice(course)}
+                                ₪{getDiscountedPrice(course)}
                               </span>
                             </>
                           ) : (
-                            `$${course.coursePrice}`
+                            `₪${course.coursePrice}`
                           )}
                         </span>
                       </div>

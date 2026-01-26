@@ -20,7 +20,6 @@ import {
   BookOpen,
   GraduationCap,
   ClipboardList,
-  DollarSign,
   TrendingUp,
   BarChart3,
   ArrowRight,
@@ -368,7 +367,7 @@ export function DashboardHome() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-green-600" />
+              <span className="text-green-600 text-xl font-bold">₪</span>
               Revenue Overview
             </CardTitle>
             <CardDescription>Financial metrics</CardDescription>
@@ -383,13 +382,13 @@ export function DashboardHome() {
                 <div>
                   <p className="text-sm text-muted-foreground">Total Revenue</p>
                   <p className="text-3xl font-bold text-green-600">
-                    ${courseStats?.data?.totalRevenue?.toLocaleString() || 0}
+                    ₪{courseStats?.data?.totalRevenue?.toLocaleString() || 0}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Average Course Price</p>
                   <p className="text-xl font-semibold">
-                    ${courseStats?.data?.averagePrice?.toFixed(2) || 0}
+                    ₪{courseStats?.data?.averagePrice?.toFixed(2) || 0}
                   </p>
                 </div>
               </div>
