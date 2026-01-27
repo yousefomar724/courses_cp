@@ -954,7 +954,9 @@ export interface FreeCourse {
     he?: string;
   } | string;
   universityId: University | string;
-  facultyId: Faculty | string;
+  facultyIds: (Faculty | string)[];
+  /** @deprecated Legacy field; prefer facultyIds. */
+  facultyId?: Faculty | string;
   instructorId: Admin | string;
   imageUrl: string;
   sections: Section[];
@@ -977,7 +979,7 @@ export interface CreateFreeCourseInput {
     he: string;
   };
   universityId: string;
-  facultyId: string;
+  facultyIds: string[];
   instructorId: string;
   imageUrl: string;
   sections?: Section[];
@@ -995,7 +997,7 @@ export interface UpdateFreeCourseInput {
     he: string;
   };
   universityId?: string;
-  facultyId?: string;
+  facultyIds?: string[];
   instructorId?: string;
   imageUrl?: string;
   isActive?: boolean;

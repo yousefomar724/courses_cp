@@ -31,6 +31,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { MultipleSelector } from "@/components/ui/multiple-selector";
+import type { Option } from "@/components/ui/multiple-selector";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 // Section builder removed - sections now managed on separate page
 import { ArrowLeft, Loader2, X } from "lucide-react";
@@ -69,7 +71,9 @@ const freeCourseSchema = z.object({
       .max(2000),
   }),
   universityId: z.string().min(1, "University is required"),
-  facultyId: z.string().min(1, "Faculty is required"),
+  facultyIds: z
+    .array(z.string())
+    .min(1, "At least one faculty is required"),
   instructorId: z.string().min(1, "Instructor is required"),
   imageUrl: z.string().optional(),
 });
@@ -99,6 +103,7 @@ export default function CreateUpdateFreeCourse() {
   const { data: facultiesData } = useFaculties({
     universityId: selectedUniversity,
     isActive: true,
+    limit: 500,
   });
   const { data: adminsData } = useAdmins({ isActive: true });
 
@@ -111,7 +116,7 @@ export default function CreateUpdateFreeCourse() {
       name: { en: "", ar: "", he: "" },
       overview: { en: "", ar: "", he: "" },
       universityId: "",
-      facultyId: "",
+      facultyIds: [],
       instructorId: "",
       imageUrl: "",
     },
@@ -138,17 +143,28 @@ export default function CreateUpdateFreeCourse() {
               he: course.overview.he || "",
             };
 
-      form.reset({
-        name: nameObj,
-        overview: overviewObj,
-        universityId:
-          typeof course.universityId === "string"
-            ? course.universityId
-            : course.universityId._id,
-        facultyId:
+      const universityId =
+        typeof course.universityId === "string"
+          ? course.universityId
+          : course.universityId._id;
+      let facultyIds: string[] = [];
+      if (Array.isArray(course.facultyIds) && course.facultyIds.length > 0) {
+        facultyIds = course.facultyIds.map((f) =>
+          typeof f === "string" ? f : (f as { _id: string })._id
+        );
+      } else if (course.facultyId != null) {
+        facultyIds = [
           typeof course.facultyId === "string"
             ? course.facultyId
             : course.facultyId._id,
+        ];
+      }
+
+      form.reset({
+        name: nameObj,
+        overview: overviewObj,
+        universityId,
+        facultyIds,
         instructorId:
           typeof course.instructorId === "string"
             ? course.instructorId
@@ -156,11 +172,7 @@ export default function CreateUpdateFreeCourse() {
         imageUrl: course.imageUrl,
       });
 
-      setSelectedUniversity(
-        typeof course.universityId === "string"
-          ? course.universityId
-          : course.universityId._id
-      ); // Sections loaded separately on sections page
+      setSelectedUniversity(universityId);
     }
   }, [freeCourseData, isEditMode, form]);
 
@@ -282,7 +294,7 @@ export default function CreateUpdateFreeCourse() {
                         onValueChange={(value) => {
                           field.onChange(value);
                           setSelectedUniversity(value);
-                          form.setValue("facultyId", ""); // Reset faculty when university changes
+                          form.setValue("facultyIds", []);
                         }}
                         value={field.value}
                       >
@@ -309,36 +321,45 @@ export default function CreateUpdateFreeCourse() {
 
                 <FormField
                   control={form.control}
-                  name="facultyId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Faculty *</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        disabled={!selectedUniversity}
-                      >
+                  name="facultyIds"
+                  render={({ field }) => {
+                    const options: Option[] = (
+                      facultiesData?.data?.items ?? []
+                    ).map((faculty) => ({
+                      label: getDisplayName(faculty.name),
+                      value: faculty._id,
+                    }));
+                    return (
+                      <FormItem>
+                        <FormLabel>Faculties *</FormLabel>
                         <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select faculty" />
-                          </SelectTrigger>
+                          <MultipleSelector
+                            options={options}
+                            value={field.value.map((value) => {
+                              const opt = options.find((o) => o.value === value);
+                              return opt ?? { label: value, value };
+                            })}
+                            onChange={(selected) =>
+                              field.onChange(selected.map((o) => o.value))
+                            }
+                            placeholder="Select faculties..."
+                            disabled={!selectedUniversity}
+                            emptyIndicator={
+                              <p className="text-center text-sm text-muted-foreground">
+                                No faculties found.
+                              </p>
+                            }
+                          />
                         </FormControl>
-                        <SelectContent>
-                          {facultiesData?.data?.items?.map((faculty) => (
-                            <SelectItem key={faculty._id} value={faculty._id}>
-                              {getDisplayName(faculty.name)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {!selectedUniversity && (
-                        <FormDescription>
-                          Select a university first
-                        </FormDescription>
-                      )}
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                        {!selectedUniversity && (
+                          <FormDescription>
+                            Select a university first
+                          </FormDescription>
+                        )}
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
                 />
 
                 <FormField

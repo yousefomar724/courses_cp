@@ -60,8 +60,6 @@ export default function FreeCoursesPage() {
       isActiveFilter === "all" ? undefined : isActiveFilter === "active",
   });
 
-  console.log("data", data);
-
   const deleteMutation = useDeleteFreeCourse();
 
   const handleDelete = async () => {
@@ -79,6 +77,16 @@ export default function FreeCoursesPage() {
   const getDisplayName = (value: any) => {
     if (typeof value === "string") return value;
     return value?.en || value?.name?.en || "N/A";
+  };
+
+  const getFacultiesForDisplay = (course: FreeCourse): (Faculty | string)[] => {
+    if (Array.isArray(course.facultyIds) && course.facultyIds.length > 0) {
+      return course.facultyIds;
+    }
+    if (course.facultyId != null) {
+      return [course.facultyId];
+    }
+    return [];
   };
 
   if (!canView) {
@@ -174,7 +182,20 @@ export default function FreeCoursesPage() {
                         {getDisplayName(course.universityId as University)}
                       </TableCell>
                       <TableCell>
-                        {getDisplayName(course.facultyId as Faculty)}
+                        <div className="flex flex-wrap gap-1">
+                          {getFacultiesForDisplay(course).map((f, i) => (
+                            <Badge
+                              key={typeof f === "string" ? f : (f as Faculty)._id ?? i}
+                              variant="outline"
+                              className="font-normal"
+                            >
+                              {typeof f === "string"
+                                ? f
+                                : getDisplayName((f as Faculty).name)}
+                            </Badge>
+                          ))}
+                          {getFacultiesForDisplay(course).length === 0 && "—"}
+                        </div>
                       </TableCell>
                       <TableCell>
                         {typeof course.instructorId === "object"
