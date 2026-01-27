@@ -968,13 +968,13 @@ export interface FreeCourse {
 export interface CreateFreeCourseInput {
   name: {
     en: string;
-    ar?: string;
-    he?: string;
+    ar: string;
+    he: string;
   };
   overview: {
     en: string;
-    ar?: string;
-    he?: string;
+    ar: string;
+    he: string;
   };
   universityId: string;
   facultyId: string;
@@ -986,13 +986,13 @@ export interface CreateFreeCourseInput {
 export interface UpdateFreeCourseInput {
   name?: {
     en: string;
-    ar?: string;
-    he?: string;
+    ar: string;
+    he: string;
   };
   overview?: {
     en: string;
-    ar?: string;
-    he?: string;
+    ar: string;
+    he: string;
   };
   universityId?: string;
   facultyId?: string;

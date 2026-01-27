@@ -45,16 +45,28 @@ const freeCourseSchema = z.object({
       .string()
       .min(2, "English name must be at least 2 characters")
       .max(200),
-    ar: z.string().max(200).optional(),
-    he: z.string().max(200).optional(),
+    ar: z
+      .string()
+      .min(2, "Arabic name must be at least 2 characters")
+      .max(200),
+    he: z
+      .string()
+      .min(2, "Hebrew name must be at least 2 characters")
+      .max(200),
   }),
   overview: z.object({
     en: z
       .string()
       .min(10, "English overview must be at least 10 characters")
       .max(2000),
-    ar: z.string().max(2000).optional(),
-    he: z.string().max(2000).optional(),
+    ar: z
+      .string()
+      .min(10, "Arabic overview must be at least 10 characters")
+      .max(2000),
+    he: z
+      .string()
+      .min(10, "Hebrew overview must be at least 10 characters")
+      .max(2000),
   }),
   universityId: z.string().min(1, "University is required"),
   facultyId: z.string().min(1, "Faculty is required"),
@@ -110,11 +122,21 @@ export default function CreateUpdateFreeCourse() {
     if (isEditMode && freeCourseData?.data) {
       const course = freeCourseData.data;
       const nameObj =
-        typeof course.name === "string" ? { en: course.name } : course.name;
+        typeof course.name === "string"
+          ? { en: course.name, ar: "", he: "" }
+          : {
+              en: course.name.en || "",
+              ar: course.name.ar || "",
+              he: course.name.he || "",
+            };
       const overviewObj =
         typeof course.overview === "string"
-          ? { en: course.overview }
-          : course.overview;
+          ? { en: course.overview, ar: "", he: "" }
+          : {
+              en: course.overview.en || "",
+              ar: course.overview.ar || "",
+              he: course.overview.he || "",
+            };
 
       form.reset({
         name: nameObj,
@@ -464,7 +486,7 @@ export default function CreateUpdateFreeCourse() {
                     name="name.ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Course Name (Arabic)</FormLabel>
+                        <FormLabel>Course Name (Arabic) *</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="Enter course name in Arabic"
@@ -481,7 +503,7 @@ export default function CreateUpdateFreeCourse() {
                     name="name.he"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Course Name (Hebrew)</FormLabel>
+                        <FormLabel>Course Name (Hebrew) *</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="Enter course name in Hebrew"
@@ -518,7 +540,7 @@ export default function CreateUpdateFreeCourse() {
                     name="overview.ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Overview (Arabic)</FormLabel>
+                        <FormLabel>Overview (Arabic) *</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="Enter course overview in Arabic"
@@ -536,7 +558,7 @@ export default function CreateUpdateFreeCourse() {
                     name="overview.he"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Overview (Hebrew)</FormLabel>
+                        <FormLabel>Overview (Hebrew) *</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="Enter course overview in Hebrew"
