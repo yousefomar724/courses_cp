@@ -12,7 +12,7 @@ import {
 } from "@/hooks/use-content-items"
 import { useSection } from "@/hooks/use-sections"
 import { useFreeCourse } from "@/hooks/use-free-courses"
-import { useVideoLibraries } from "@/hooks/use-videos-library"
+import { useVideosForSelect, useGetPresignedVideoUrl } from "@/hooks/use-videos-library"
 import { useQuizzes } from "@/hooks/use-quizzes"
 import { Button } from "@/components/ui/button"
 import {
@@ -89,8 +89,10 @@ export default function CreateUpdateContentItem() {
     sectionId || ""
   )
 
-  // Load video library and quizzes for selection
-  const { data: videoLibraries } = useVideoLibraries({})
+  // Load video library and quizzes for selection (match lesson flow)
+  const { data: videosData } = useVideosForSelect("lesson")
+  const getPresignedUrlMutation = useGetPresignedVideoUrl()
+  const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | null>(null)
   const { data: quizzes } = useQuizzes({
     type: "course",
     isActive: true,
@@ -128,6 +130,30 @@ export default function CreateUpdateContentItem() {
       setSelectedContentType(contentItem.type)
     }
   }, [contentItem, contentItems, isEditMode, form])
+
+  const selectedVideoId = form.watch("resourceId")
+
+  // Fetch presigned URL for video preview when a library video is selected
+  useEffect(() => {
+    if (selectedContentType !== "video" || !selectedVideoId) {
+      setVideoPreviewUrl(null)
+      return
+    }
+    let cancelled = false
+    const mutate = getPresignedUrlMutation.mutateAsync
+    mutate({ id: selectedVideoId, expiresIn: 3600 })
+      .then((res) => {
+        if (!cancelled && res.data?.videoUrl) setVideoPreviewUrl(res.data.videoUrl)
+      })
+      .catch(() => {
+        if (!cancelled) setVideoPreviewUrl(null)
+      })
+    return () => {
+      cancelled = true
+      setVideoPreviewUrl(null)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- exclude mutation to avoid loop (mutateAsync ref changes with mutation state)
+  }, [selectedContentType, selectedVideoId])
 
   const onSubmit = async (data: ContentItemFormValues) => {
     try {
@@ -451,17 +477,50 @@ export default function CreateUpdateContentItem() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {videoLibraries?.data?.docs?.map((video) => (
-                              <SelectItem key={video._id} value={video._id}>
-                                {getDisplayName(video.name)}
+                            {videosData?.data?.map((video) => (
+                              <SelectItem key={video.id} value={video.id}>
+                                {video.name}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
+                        {selectedVideoId && (
+                          <p className="text-xs text-muted-foreground">
+                            Selected:{" "}
+                            {videosData?.data?.find((v) => v.id === selectedVideoId)?.name}
+                          </p>
+                        )}
                         <FormMessage />
                       </FormItem>
                     )}
                   />
+
+                  {selectedVideoId && (
+                    <div className="rounded-lg border p-3 bg-muted/30">
+                      <p className="text-sm font-medium text-muted-foreground mb-2">
+                        Video preview
+                      </p>
+                      {getPresignedUrlMutation.isPending ? (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground py-8">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Loading preview...
+                        </div>
+                      ) : videoPreviewUrl ? (
+                        <video
+                          src={videoPreviewUrl}
+                          controls
+                          className="w-full rounded-md max-h-64"
+                          preload="metadata"
+                        >
+                          Your browser does not support the video tag.
+                        </video>
+                      ) : (
+                        <p className="text-sm text-muted-foreground py-4">
+                          Could not load preview. Please try again.
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   <div className="text-center text-sm text-muted-foreground">
                     OR

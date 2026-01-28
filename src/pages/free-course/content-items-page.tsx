@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, FileText, Video, ClipboardList, Eye, Trash2 } from "lucide-react";
+import { Plus, FileText, Video, ClipboardList, Eye, Pencil, Trash2 } from "lucide-react";
 import { BreadcrumbNavigation } from "@/components/shared/breadcrumb-navigation";
 import { useDeleteContentItem } from "@/hooks/use-content-items";
 import { ViewContentItemDialog } from "@/components/free-course/view-content-item-dialog";
@@ -195,17 +195,27 @@ export default function ContentItemsPage() {
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
                           {canUpdate && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => {
-                                setSelectedContent({ id: item._id, title: getDisplayName(item.title) });
-                                setShowViewDialog(true);
-                              }}
-                            >
-                              <Eye className="mr-2 h-4 w-4" />
-                              View
-                            </Button>
+                            <>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedContent({ id: item._id, title: getDisplayName(item.title) });
+                                  setShowViewDialog(true);
+                                }}
+                              >
+                                <Eye className="mr-2 h-4 w-4" />
+                                View
+                              </Button>
+                              <Link
+                                to={`/dashboard/free-courses/${freeCourseId}/sections/${sectionId}/content/${item._id}/edit`}
+                              >
+                                <Button variant="ghost" size="sm">
+                                  <Pencil className="mr-2 h-4 w-4" />
+                                  Edit
+                                </Button>
+                              </Link>
+                            </>
                           )}
                           {canDelete && (
                             <Button

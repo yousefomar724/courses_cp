@@ -119,8 +119,8 @@ function App() {
             <Route path="free-courses/:freeCourseId/sections/:sectionId/edit" element={<CreateUpdateSection />} />
             <Route path="free-courses/:freeCourseId/sections/:sectionId/content" element={<ContentItemsPage />} />
             <Route path="free-courses/:freeCourseId/sections/:sectionId/content/create" element={<CreateUpdateContentItem />} />
+            <Route path="free-courses/:freeCourseId/sections/:sectionId/content/:contentId/edit" element={<CreateUpdateContentItem />} />
             <Route path="free-courses/:freeCourseId/enrollments" element={<FreeCourseEnrollmentsPage />} />
-            {/* Content item editing disabled - view only */}
             <Route path="courses/new" element={<CreateCourse />} />
             <Route path="courses/:id/edit" element={<CreateCourse />} />
             <Route path="courses/:courseId/topics" element={<TopicsPage />} />

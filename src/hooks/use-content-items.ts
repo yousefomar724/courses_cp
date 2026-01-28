@@ -74,17 +74,18 @@ export function useCreateContentItem(freeCourseId: string, sectionId: string) {
   });
 }
 
+/** Payload for updating a content item (same shape as create + optional fileUrl) */
+export type UpdateContentItemPayload = CreateContentItemInput & { fileUrl?: string };
+
 /**
- * Hook to update a content item
- * Since the backend doesn't have a direct update endpoint for content items,
- * we update the entire section with the modified content item
+ * Hook to update a content item.
+ * Updates the section with the modified content item (replace in contentItems, then updateSection).
  */
 export function useUpdateContentItem(freeCourseId: string, sectionId: string, contentId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async () => {
-      // First, get the current section
+    mutationFn: async (payload: UpdateContentItemPayload) => {
       const freeCourse = await getFreeCourseById(freeCourseId);
       const section = freeCourse.data?.sections?.find((s) => s._id === sectionId);
 
@@ -92,12 +93,30 @@ export function useUpdateContentItem(freeCourseId: string, sectionId: string, co
         throw new Error('Section not found');
       }
 
-      // Update the section with the modified content items
+      const contentItems = section.contentItems ?? [];
+      const index = contentItems.findIndex((c) => c._id === contentId);
+      if (index === -1) {
+        throw new Error('Content item not found');
+      }
+
+      const existing = contentItems[index];
+      const updated: typeof existing = {
+        ...existing,
+        title: payload.title,
+        type: payload.type,
+        resourceId: payload.resourceId,
+        url: payload.url ?? payload.fileUrl ?? existing.url,
+      };
+
+      const updatedContentItems = [...contentItems];
+      updatedContentItems[index] = updated;
+
       return updateSection(freeCourseId, sectionId, {
         title: section.title,
         description: section.description,
         order: section.order,
         isVisible: section.isVisible,
+        contentItems: updatedContentItems,
       });
     },
     onSuccess: () => {

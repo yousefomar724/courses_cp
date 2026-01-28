@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState } from 'react';
 import { useContentItem } from '@/hooks/use-content-items';
-import { useVideoLibrary } from '@/hooks/use-videos-library';
+import { useVideoLibrary, useGetPresignedVideoUrl } from '@/hooks/use-videos-library';
 import { useQuiz } from '@/hooks/use-quizzes';
 import {
   Dialog,
@@ -34,12 +35,15 @@ export function ViewContentItemDialog({
     contentId
   );
 
-  // Fetch related resource data based on type
+  const [presignedVideoUrl, setPresignedVideoUrl] = useState<string | null>(null);
+  const getPresignedUrlMutation = useGetPresignedVideoUrl();
+
+  // Fetch video metadata (name only; do not use videoUrl – it's the S3 key)
   const { data: videoData } = useVideoLibrary(
     contentItem?.type === 'video' && contentItem?.resourceId
       ? contentItem.resourceId
       : '',
-    { includePresignedUrls: true }
+    { includePresignedUrls: false }
   );
 
   const { data: quizData } = useQuiz(
@@ -47,6 +51,28 @@ export function ViewContentItemDialog({
       ? contentItem.resourceId
       : ''
   );
+
+  // Fetch presigned URL when viewing a video-from-library (no url from API). Skip when url exists (external or backend-provided).
+  useEffect(() => {
+    if (!open || contentItem?.type !== 'video' || !contentItem?.resourceId || contentItem.url) {
+      setPresignedVideoUrl(null);
+      return;
+    }
+    let cancelled = false;
+    const mutate = getPresignedUrlMutation.mutateAsync;
+    mutate({ id: contentItem.resourceId, expiresIn: 3600 })
+      .then((res) => {
+        if (!cancelled && res.data?.videoUrl) setPresignedVideoUrl(res.data.videoUrl);
+      })
+      .catch(() => {
+        if (!cancelled) setPresignedVideoUrl(null);
+      });
+    return () => {
+      cancelled = true;
+      setPresignedVideoUrl(null);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- exclude mutation to avoid loop (mutateAsync ref changes with mutation state)
+  }, [open, contentItem?.type, contentItem?.resourceId, contentItem?.url]);
 
   const getDisplayName = (value: any) => {
     if (typeof value === 'string') return value;
@@ -245,18 +271,18 @@ export function ViewContentItemDialog({
             {/* Video Type */}
             {contentItem.type === 'video' && (
               <div className="space-y-2">
-                {contentItem.resourceId && videoData?.data ? (
+                {contentItem.resourceId ? (
                   <div>
                     <span className="text-sm font-medium">Video Library:</span>
-                    <p className="text-sm mt-1">
-                      {getDisplayName(videoData.data.name)}
-                    </p>
-                    {videoData.data.videoUrl && (
+                    {/* <p className="text-sm mt-1">
+                      {videoData?.data ? getDisplayName(videoData.data.name) : contentItem.resourceId || 'N/A'}
+                    </p> */}
+                    {contentItem.url ? (
                       <div className="mt-3">
-                        {isVideoUrl(videoData.data.videoUrl) ? (
+                        {isVideoUrl(contentItem.url) ? (
                           <div className="w-full">
                             <video
-                              src={videoData.data.videoUrl}
+                              src={contentItem.url}
                               controls
                               className="w-full rounded-md max-h-96"
                               preload="metadata"
@@ -264,7 +290,7 @@ export function ViewContentItemDialog({
                               Your browser does not support the video tag.
                             </video>
                             <a
-                              href={videoData.data.videoUrl}
+                              href={contentItem.url}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-xs text-primary hover:underline flex items-center gap-1 mt-2"
@@ -272,15 +298,15 @@ export function ViewContentItemDialog({
                               Open in new tab <ExternalLink className="h-3 w-3" />
                             </a>
                           </div>
-                        ) : isImageUrl(videoData.data.videoUrl) ? (
+                        ) : isImageUrl(contentItem.url) ? (
                           <div className="w-full">
                             <img
-                              src={videoData.data.videoUrl}
-                              alt={getDisplayName(videoData.data.name)}
+                              src={contentItem.url}
+                              alt={videoData?.data ? getDisplayName(videoData.data.name) : 'Video'}
                               className="w-full rounded-md max-h-96 object-contain"
                             />
                             <a
-                              href={videoData.data.videoUrl}
+                              href={contentItem.url}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-xs text-primary hover:underline flex items-center gap-1 mt-2"
@@ -290,7 +316,7 @@ export function ViewContentItemDialog({
                           </div>
                         ) : (
                           <a
-                            href={videoData.data.videoUrl}
+                            href={contentItem.url}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-sm text-primary hover:underline flex items-center gap-1 mt-2"
@@ -298,6 +324,63 @@ export function ViewContentItemDialog({
                             Watch Video <ExternalLink className="h-3 w-3" />
                           </a>
                         )}
+                      </div>
+                    ) : getPresignedUrlMutation.isPending ? (
+                      <div className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Loading video...
+                      </div>
+                    ) : presignedVideoUrl ? (
+                      <div className="mt-3">
+                        {isVideoUrl(presignedVideoUrl) ? (
+                          <div className="w-full">
+                            <video
+                              src={presignedVideoUrl}
+                              controls
+                              className="w-full rounded-md max-h-96"
+                              preload="metadata"
+                            >
+                              Your browser does not support the video tag.
+                            </video>
+                            <a
+                              href={presignedVideoUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-primary hover:underline flex items-center gap-1 mt-2"
+                            >
+                              Open in new tab <ExternalLink className="h-3 w-3" />
+                            </a>
+                          </div>
+                        ) : isImageUrl(presignedVideoUrl) ? (
+                          <div className="w-full">
+                            <img
+                              src={presignedVideoUrl}
+                              alt={videoData?.data ? getDisplayName(videoData.data.name) : 'Video'}
+                              className="w-full rounded-md max-h-96 object-contain"
+                            />
+                            <a
+                              href={presignedVideoUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-primary hover:underline flex items-center gap-1 mt-2"
+                            >
+                              Open in new tab <ExternalLink className="h-3 w-3" />
+                            </a>
+                          </div>
+                        ) : (
+                          <a
+                            href={presignedVideoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-primary hover:underline flex items-center gap-1 mt-2"
+                          >
+                            Watch Video <ExternalLink className="h-3 w-3" />
+                          </a>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-sm text-muted-foreground mt-2">
+                        Could not load video URL. Please try again later.
                       </div>
                     )}
                   </div>

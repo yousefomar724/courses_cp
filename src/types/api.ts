@@ -1031,6 +1031,7 @@ export interface UpdateSectionInput {
   };
   isVisible?: boolean;
   order?: number;
+  contentItems?: ContentItem[];
 }
 
 export interface CreateContentItemInput {
@@ -1042,6 +1043,8 @@ export interface CreateContentItemInput {
   };
   resourceId?: string;
   url?: string;
+  /** Uploaded file download URL (file type). Backend may expect fileUrl for file content. */
+  fileUrl?: string;
 }
 
 export interface FreeCourseQueryParams extends PaginationParams {
