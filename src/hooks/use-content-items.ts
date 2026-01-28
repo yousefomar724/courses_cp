@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { addContentToSection, getFreeCourseById,removeContentFromSection,updateSection } from '@/services/free-course-service';
-import type { CreateContentItemInput, ContentItem } from '@/types/api';
+import { addContentToSection, getFreeCourseById, removeContentFromSection, updateSection } from '@/services/free-course-service';
+import type { CreateContentItemInput } from '@/types/api';
 import { toast } from 'sonner';
 
 // Query keys
@@ -82,7 +83,7 @@ export function useUpdateContentItem(freeCourseId: string, sectionId: string, co
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (_updatedContentItem: Partial<ContentItem>) => {
+    mutationFn: async () => {
       // First, get the current section
       const freeCourse = await getFreeCourseById(freeCourseId);
       const section = freeCourse.data?.sections?.find((s) => s._id === sectionId);

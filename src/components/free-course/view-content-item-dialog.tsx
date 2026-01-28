@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useContentItem } from '@/hooks/use-content-items';
 import { useVideoLibrary } from '@/hooks/use-videos-library';
 import { useQuiz } from '@/hooks/use-quizzes';
@@ -38,7 +39,7 @@ export function ViewContentItemDialog({
     contentItem?.type === 'video' && contentItem?.resourceId
       ? contentItem.resourceId
       : '',
-    { includePresignedUrls: false }
+    { includePresignedUrls: true }
   );
 
   const { data: quizData } = useQuiz(
@@ -78,6 +79,26 @@ export function ViewContentItemDialog({
     );
   };
 
+  // Helper function to check if URL is a video
+  const isVideoUrl = (url: string): boolean => {
+    if (!url) return false;
+    const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv', '.m3u8'];
+    const lowerUrl = url.toLowerCase();
+    return videoExtensions.some(ext => lowerUrl.includes(ext)) || 
+           lowerUrl.includes('video/') ||
+           lowerUrl.includes('.mp4') ||
+           lowerUrl.includes('videos/');
+  };
+
+  // Helper function to check if URL is an image
+  const isImageUrl = (url: string): boolean => {
+    if (!url) return false;
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.bmp'];
+    const lowerUrl = url.toLowerCase();
+    return imageExtensions.some(ext => lowerUrl.includes(ext)) || 
+           lowerUrl.includes('image/');
+  };
+
   if (isLoading) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -96,7 +117,7 @@ export function ViewContentItemDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
             {getContentTypeIcon(contentItem.type)}
@@ -104,7 +125,7 @@ export function ViewContentItemDialog({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
+        <div className="space-y-6 py-4 overflow-y-auto flex-1 min-h-0">
           {/* Type and Order */}
           <div>
             <div>
@@ -160,16 +181,57 @@ export function ViewContentItemDialog({
             {contentItem.type === 'file' && (
               <div className="space-y-2">
                 {contentItem.url && (
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm">File URL:</span>
-                    <a
-                      href={contentItem.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-primary hover:underline flex items-center gap-1"
-                    >
-                      View File <ExternalLink className="h-3 w-3" />
-                    </a>
+                  <div>
+                    {isVideoUrl(contentItem.url) ? (
+                      <div className="w-full">
+                        <span className="text-sm font-medium block mb-2">Video File:</span>
+                        <video
+                          src={contentItem.url}
+                          controls
+                          className="w-full rounded-md max-h-96"
+                          preload="metadata"
+                        >
+                          Your browser does not support the video tag.
+                        </video>
+                        <a
+                          href={contentItem.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-primary hover:underline flex items-center gap-1 mt-2"
+                        >
+                          Open in new tab <ExternalLink className="h-3 w-3" />
+                        </a>
+                      </div>
+                    ) : isImageUrl(contentItem.url) ? (
+                      <div className="w-full">
+                        <span className="text-sm font-medium block mb-2">Image File:</span>
+                        <img
+                          src={contentItem.url}
+                          alt="File preview"
+                          className="w-full rounded-md max-h-96 object-contain"
+                        />
+                        <a
+                          href={contentItem.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-primary hover:underline flex items-center gap-1 mt-2"
+                        >
+                          Open in new tab <ExternalLink className="h-3 w-3" />
+                        </a>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm">File URL:</span>
+                        <a
+                          href={contentItem.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-primary hover:underline flex items-center gap-1"
+                        >
+                          View File <ExternalLink className="h-3 w-3" />
+                        </a>
+                      </div>
+                    )}
                   </div>
                 )}
                 {contentItem.resourceId && !contentItem.url && (
@@ -190,27 +252,105 @@ export function ViewContentItemDialog({
                       {getDisplayName(videoData.data.name)}
                     </p>
                     {videoData.data.videoUrl && (
-                      <a
-                        href={videoData.data.videoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-primary hover:underline flex items-center gap-1 mt-2"
-                      >
-                        Watch Video <ExternalLink className="h-3 w-3" />
-                      </a>
+                      <div className="mt-3">
+                        {isVideoUrl(videoData.data.videoUrl) ? (
+                          <div className="w-full">
+                            <video
+                              src={videoData.data.videoUrl}
+                              controls
+                              className="w-full rounded-md max-h-96"
+                              preload="metadata"
+                            >
+                              Your browser does not support the video tag.
+                            </video>
+                            <a
+                              href={videoData.data.videoUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-primary hover:underline flex items-center gap-1 mt-2"
+                            >
+                              Open in new tab <ExternalLink className="h-3 w-3" />
+                            </a>
+                          </div>
+                        ) : isImageUrl(videoData.data.videoUrl) ? (
+                          <div className="w-full">
+                            <img
+                              src={videoData.data.videoUrl}
+                              alt={getDisplayName(videoData.data.name)}
+                              className="w-full rounded-md max-h-96 object-contain"
+                            />
+                            <a
+                              href={videoData.data.videoUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-primary hover:underline flex items-center gap-1 mt-2"
+                            >
+                              Open in new tab <ExternalLink className="h-3 w-3" />
+                            </a>
+                          </div>
+                        ) : (
+                          <a
+                            href={videoData.data.videoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-primary hover:underline flex items-center gap-1 mt-2"
+                          >
+                            Watch Video <ExternalLink className="h-3 w-3" />
+                          </a>
+                        )}
+                      </div>
                     )}
                   </div>
                 ) : contentItem.url ? (
                   <div>
                     <span className="text-sm font-medium">External Video:</span>
-                    <a
-                      href={contentItem.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-primary hover:underline flex items-center gap-1 mt-1"
-                    >
-                      {contentItem.url} <ExternalLink className="h-3 w-3" />
-                    </a>
+                    <div className="mt-2">
+                      {isVideoUrl(contentItem.url) ? (
+                        <div className="w-full">
+                          <video
+                            src={contentItem.url}
+                            controls
+                            className="w-full rounded-md max-h-96"
+                            preload="metadata"
+                          >
+                            Your browser does not support the video tag.
+                          </video>
+                          <a
+                            href={contentItem.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-primary hover:underline flex items-center gap-1 mt-2"
+                          >
+                            Open in new tab <ExternalLink className="h-3 w-3" />
+                          </a>
+                        </div>
+                      ) : isImageUrl(contentItem.url) ? (
+                        <div className="w-full">
+                          <img
+                            src={contentItem.url}
+                            alt="Content preview"
+                            className="w-full rounded-md max-h-96 object-contain"
+                          />
+                          <a
+                            href={contentItem.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-primary hover:underline flex items-center gap-1 mt-2"
+                          >
+                            Open in new tab <ExternalLink className="h-3 w-3" />
+                          </a>
+                        </div>
+                      ) : (
+                        <a
+                          href={contentItem.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-primary hover:underline flex items-center gap-1"
+                        >
+                          {contentItem.url} <ExternalLink className="h-3 w-3" />
+                        </a>
+                      )}
+                    </div>
                   </div>
                 ) : (
                   <div className="text-sm text-muted-foreground">

@@ -13,12 +13,12 @@ export const videoLibraryKeys = {
   lists: () => [...videoLibraryKeys.all, 'list'] as const,
   list: (params: VideoLibraryQueryParams) => [...videoLibraryKeys.lists(), params] as const,
   details: () => [...videoLibraryKeys.all, 'detail'] as const,
-  detail: (id: string, params?: { language?: string; includePresignedUrls?: boolean }) => 
+  detail: (id: string, params?: { language?: string; includePresignedUrls?: boolean }) =>
     [...videoLibraryKeys.details(), id, params] as const,
   stats: (entityType: string) => [...videoLibraryKeys.all, 'stats', entityType] as const,
-  select: (entityType: string, language?: string) => 
+  select: (entityType: string, language?: string) =>
     [...videoLibraryKeys.all, 'select', entityType, language] as const,
-  search: (search: string, filters: any, options: any, language: string) =>
+  search: (search: string, filters: Record<string, unknown>, options: Record<string, unknown>, language: string) =>
     [...videoLibraryKeys.all, 'search', search, filters, options, language] as const,
 };
 
@@ -226,31 +226,27 @@ export function useCompleteVideoUpload() {
     entityId?: string;
     onProgress?: (progress: { loaded: number; total: number; percentage: number }) => void;
   }) => {
-    try {
-      // Upload file to S3
-      const uploadResult = await uploadMutation.mutateAsync({
-        file,
-        entityType,
-        entityId,
-        onProgress,
-      });
+    // Upload file to S3
+    const uploadResult = await uploadMutation.mutateAsync({
+      file,
+      entityType,
+      entityId,
+      onProgress,
+    });
 
-      // Create video library record
-      const videoLibraryData: CreateVideoLibraryInput = {
-        name,
-        videoUrl: uploadResult.key, // Use the S3 key
-        videoType: file.type,
-        fileSize: file.size,
-        entityType,
-        uploadedBy: '', // This will be set by the backend from the authenticated user
-      };
+    // Create video library record
+    const videoLibraryData: CreateVideoLibraryInput = {
+      name,
+      videoUrl: uploadResult.key, // Use the S3 key
+      videoType: file.type,
+      fileSize: file.size,
+      entityType,
+      uploadedBy: '', // This will be set by the backend from the authenticated user
+    };
 
-      const videoLibrary = await createMutation.mutateAsync(videoLibraryData);
-      
-      return videoLibrary;
-    } catch (error) {
-      throw error;
-    }
+    const videoLibrary = await createMutation.mutateAsync(videoLibraryData);
+
+    return videoLibrary;
   };
 
   return {
